@@ -3,3 +3,5 @@
 doc/
 pkg/
 tmp/
+config-secure.yaml
+service-account.json

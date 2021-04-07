@@ -1,0 +1,7 @@
+.gcloudignore
+.git
+.gitignore
+.toys
+test
+README.md
+#!include:.gitignore
