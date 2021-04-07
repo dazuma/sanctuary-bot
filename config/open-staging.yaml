@@ -1,0 +1,9 @@
+discord_client_id: "829199284326498314"
+discord_guild_id: "828125771288805436" # DTS
+discord_public_key: "acf6489da4eb8f684371426d56201d63abc583413118df36aed86f6ef55bbe1d"
+gcp_function_name: sanctuary-bot-staging
+gcp_project_id: daniel-azuma-com-1
+gcp_project_number: "561558629009"
+help_command: help
+lookup_command: word
+secret_name: sanctuary-bot-staging

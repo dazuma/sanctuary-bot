@@ -3,7 +3,7 @@ module SanctuaryBot
     class Passage
       def initialize(data:, translation: nil)
         @translation = translation || Translation.default
-        @data = data
+        @raw_data = data
         @book = Book.find(data["bookId"])
         @reference = data["reference"]
         @content = data["content"]
@@ -13,6 +13,7 @@ module SanctuaryBot
       attr_reader :book
       attr_reader :reference
       attr_reader :content
+      attr_reader :raw_data
 
       def full_reference
         "#{reference} (#{translation.abbreviation})"

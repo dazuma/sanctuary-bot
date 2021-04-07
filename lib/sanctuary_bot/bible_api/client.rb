@@ -26,11 +26,12 @@ module SanctuaryBot
         Translation.parse(data)
       end
 
-      def passage(reference:, translation: nil)
+      def passage(reference: nil, pass_id: nil, translation: nil, type: nil)
         translation ||= Translation.default
-        pass_id = Passage.to_id(reference)
+        type ||= "text"
+        pass_id ||= Passage.to_id(reference)
         params = {
-          "content-type" => "text",
+          "content-type" => type,
           "include-titles" => "false"
         }
         data = call_api(path: "/v1/bibles/#{translation.id}/passages/#{pass_id}", params: params)

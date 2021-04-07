@@ -22,6 +22,14 @@ module SanctuaryBot
     def logger=(log)
       @logger = log
     end
+
+    def sanctuary_env
+      @sanctuary_env ||= ENV["SANCTUARY_ENV"] || "prod"
+    end
+
+    def sanctuary_env=(val)
+      @sanctuary_env = val
+    end
   end
 end
 

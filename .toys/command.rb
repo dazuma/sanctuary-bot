@@ -1,4 +1,6 @@
 tool "create" do
+  flag :staging
+
   exactly_one do
     flag :lookup_command, "--lookup-command[=NAME]"
     flag :help_command, "--help-command[=NAME]"
@@ -8,6 +10,7 @@ tool "create" do
 
   def run
     require "sanctuary_bot"
+    SanctuaryBot.sanctuary_env = staging ? "staging" : "prod"
     SanctuaryBot.logger = logger
     if lookup_command
       name = lookup_command.is_a?(String) ? lookup_command : SanctuaryBot.config.lookup_command
@@ -23,10 +26,13 @@ tool "create" do
 end
 
 tool "list" do
+  flag :staging
+
   include :bundler
 
   def run
     require "sanctuary_bot"
+    SanctuaryBot.sanctuary_env = staging ? "staging" : "prod"
     SanctuaryBot.logger = logger
     client = SanctuaryBot::DiscordApi::Client.new
     result = client.list_guild_commands
@@ -36,11 +42,13 @@ end
 
 tool "get" do
   required_arg :name
+  flag :staging
 
   include :bundler
 
   def run
     require "sanctuary_bot"
+    SanctuaryBot.sanctuary_env = staging ? "staging" : "prod"
     SanctuaryBot.logger = logger
     client = SanctuaryBot::DiscordApi::Client.new
     list = client.list_guild_commands
@@ -51,11 +59,13 @@ end
 
 tool "delete" do
   required_arg :name
+  flag :staging
 
   include :bundler
 
   def run
     require "sanctuary_bot"
+    SanctuaryBot.sanctuary_env = staging ? "staging" : "prod"
     SanctuaryBot.logger = logger
     client = SanctuaryBot::DiscordApi::Client.new
     list = client.list_guild_commands

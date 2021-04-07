@@ -1,8 +1,11 @@
 tool "register" do
+  flag :staging
+
   include :exec
 
   def run
     require "sanctuary_bot"
+    SanctuaryBot.sanctuary_env = staging ? "staging" : "prod"
     SanctuaryBot.logger = logger
     config = SanctuaryBot.config
     url = "https://discord.com/api/oauth2/authorize?client_id=#{config.discord_client_id}&scope=bot%20applications.commands"
