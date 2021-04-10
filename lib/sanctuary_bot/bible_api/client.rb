@@ -5,12 +5,12 @@ module SanctuaryBot
   module BibleApi
     class Client
       def initialize(api_key: nil, logger: nil)
-        @api_key = api_key || SanctuaryBot.config.bible_api_key
         @logger = logger || SanctuaryBot.logger
+        @api_key = api_key || SanctuaryBot.config.bible_api_key
         @faraday = Faraday.new(
           url: "https://api.scripture.api.bible",
           headers: {
-            "api-key" => api_key
+            "api-key" => @api_key
           }
         )
       end

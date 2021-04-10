@@ -7,11 +7,14 @@ module SanctuaryBot
       :discord_guild_id,
       :discord_public_key,
       :gcp_function_name,
+      :gcp_pubsub_function_name,
       :gcp_project_id,
       :gcp_project_number,
+      :gcp_region,
+      :gcp_secret_name,
+      :gcp_pubsub_topic,
       :help_command,
       :lookup_command,
-      :secret_name,
     ]
     SECURE_KEYS = [
       :bible_api_key,
@@ -44,7 +47,7 @@ module SanctuaryBot
 
     def upload_secure_file
       raise "Secure file not found" unless File.file?(@secure_file_path)
-      secret_path = secret_manager.secret_path(project: gcp_project_id, secret: secret_name)
+      secret_path = secret_manager.secret_path(project: gcp_project_id, secret: gcp_secret_name)
       begin
         @logger.info("Checking for secret: #{secret_path}")
         secret_manager.get_secret(name: secret_path)
@@ -52,7 +55,7 @@ module SanctuaryBot
         @logger.info("Creating secret: #{secret_path}")
         secret_manager.create_secret(
           parent: secret_manager.project_path(project: gcp_project_id),
-          secret_id: secret_name,
+          secret_id: gcp_secret_name,
           secret: {replication: {automatic: {}}}
         )
       end
@@ -79,17 +82,35 @@ module SanctuaryBot
       @logger.info("Secure file written")
     end
 
-    private
-
     def secret_manager
       @secret_manager ||= begin
+        @logger.info("Loading secret manager client...")
         if File.file?(@service_account_path)
-          ENV["GOOGLE_APPLICATION_CREDENTIALS"] = @service_account_path
+          ENV["GOOGLE_APPLICATION_CREDENTIALS"] ||= @service_account_path
         end
         require "google/cloud/secret_manager"
-        Google::Cloud::SecretManager.secret_manager_service
+        @logger.info("Constructing secret manager client...")
+        client = Google::Cloud::SecretManager.secret_manager_service
+        @logger.info("Got secret manager client")
+        client
       end
     end
+
+    def pubsub_client
+      @pubsub_client ||= begin
+        @logger.info("Loading pubsub client...")
+        if File.file?(@service_account_path)
+          ENV["GOOGLE_APPLICATION_CREDENTIALS"] ||= @service_account_path
+        end
+        require "google/cloud/pubsub/v1/publisher"
+        @logger.info("Constructing pubsub client...")
+        client = Google::Cloud::PubSub::V1::Publisher::Client.new
+        @logger.info("Got pubsub client")
+        client
+      end
+    end
+
+    private
 
     def load_open
       return if @open_loaded
@@ -108,7 +129,7 @@ module SanctuaryBot
       else
         @logger.info("Loading secure parameters from secret manager")
         version_name = secret_manager.secret_version_path(
-          project: gcp_project_id, secret: secret_name, secret_version: "latest"
+          project: gcp_project_id, secret: gcp_secret_name, secret_version: "latest"
         )
         version = secret_manager.access_secret_version(name: version_name)
         data = Psych.load(version.payload.data)

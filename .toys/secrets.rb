@@ -35,7 +35,7 @@ tool "grant-build-access" do
     SanctuaryBot.logger = logger
     SanctuaryBot.sanctuary_env = staging ? "staging" : "prod"
     config = SanctuaryBot.config
-    exec(["gcloud", "secrets", "add-iam-policy-binding", config.secret_name,
+    exec(["gcloud", "secrets", "add-iam-policy-binding", config.gcp_secret_name,
           "--project", config.gcp_project_id,
           "--role", "roles/secretmanager.secretAccessor",
           "--member", "serviceAccount:#{config.gcp_project_number}@cloudbuild.gserviceaccount.com"])
@@ -53,7 +53,7 @@ tool "grant-runtime-access" do
     SanctuaryBot.logger = logger
     SanctuaryBot.sanctuary_env = staging ? "staging" : "prod"
     config = SanctuaryBot.config
-    exec(["gcloud", "secrets", "add-iam-policy-binding", config.secret_name,
+    exec(["gcloud", "secrets", "add-iam-policy-binding", config.gcp_secret_name,
           "--project", config.gcp_project_id,
           "--role", "roles/secretmanager.secretAccessor",
           "--member", "serviceAccount:#{config.gcp_project_id}@appspot.gserviceaccount.com"])

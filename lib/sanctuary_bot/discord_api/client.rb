@@ -5,7 +5,8 @@ require "uri"
 module SanctuaryBot
   module DiscordApi
     class Client
-      def initialize(client_id: nil, client_secret: nil, guild_id: nil)
+      def initialize(client_id: nil, client_secret: nil, guild_id: nil, logger: nil)
+        @logger = logger || SanctuaryBot.logger
         @client_id = client_id || SanctuaryBot.config.discord_client_id
         @client_secret = client_secret || SanctuaryBot.config.discord_client_secret
         @guild_id = guild_id || SanctuaryBot.config.discord_guild_id
@@ -32,6 +33,18 @@ module SanctuaryBot
                  method: :delete)
       end
 
+      def create_followup_message(token, data)
+        call_api(path: "/webhooks/#{@client_id}/#{token}", params: {wait: "true"},
+                 method: :post, body: JSON.dump(data),
+                 headers: {"Content-Type" => "application/json"})
+      end
+
+      def edit_interaction_response(token, data)
+        call_api(path: "/webhooks/#{@client_id}/#{token}/messages/@original",
+                 method: :patch, body: JSON.dump(data),
+                 headers: {"Content-Type" => "application/json"})
+      end
+
       def token_info
         call_api(path: "/oauth2/@me")
       end
@@ -46,13 +59,24 @@ module SanctuaryBot
 
       private
 
-      def call_api(path:, method: :get, body: nil, params: nil, headers: nil)
+      def call_api(path:, method: :get, body: nil, params: nil, headers: nil, allow_retry: true)
+        @logger.info("Calling discord API")
         maybe_refresh_token
         faraday = Faraday.new(url: "https://discord.com") do |conn|
           conn.authorization(:Bearer, @access_token)
         end
         response = faraday.run_request(method, "/api/v8#{path}", body, headers) do |req|
           req.params = params if params
+        end
+        if response.status == 429
+          response_body = JSON.parse(response.body) rescue nil
+          delay = response_body["retry_after"] if response_body
+          if delay && delay < 5
+            @logger.info("Got rate limited. Retrying after #{delay}")
+            sleep(delay + 0.1)
+            return call_api(path: path, method: method, body: body,
+                            params: params, headers: headers, allow_retry: false)
+          end
         end
         if response.status < 200 || response.status >= 300
           raise Error, "Failure status from Discord API: #{response.status} #{response.body.inspect}"
@@ -74,6 +98,7 @@ module SanctuaryBot
       end
 
       def retrieve_token_data
+        @logger.info("Refreshing access token")
         request_data = {
           "grant_type" => "client_credentials",
           "scope" => "applications.commands.update"

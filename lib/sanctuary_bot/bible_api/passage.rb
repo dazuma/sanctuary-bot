@@ -216,6 +216,8 @@ module SanctuaryBot
           else
             @logger.error("Unrecognized sid: #{sid.inspect}")
           end
+        elsif node["name"] == "char"
+          parse_json(node["items"])
         elsif node["type"] == "text"
           @verses.last&.add(@line_starter)
           @line_starter = nil

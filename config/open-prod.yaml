@@ -1,11 +1,12 @@
 discord_client_id: "827386336528564235"
-discord_guild_id: "822929633208434758" # Sanctuary
+discord_guild_id: "822929633208434758"
 discord_public_key: "41d5f93d72dc7a8bfe1127e96a2121aaf585aafdce90dcfa6b1548be5fb62935"
 gcp_function_name: sanctuary-bot
+gcp_pubsub_function_name: sanctuary-bot-pubsub
 gcp_project_id: daniel-azuma-com-1
 gcp_project_number: "561558629009"
+gcp_region: us-central1
+gcp_secret_name: sanctuary-bot
+gcp_pubsub_topic: sanctuary-bot
 help_command: help
 lookup_command: word
-secret_name: sanctuary-bot
-
-# discord_guild_id: "828125771288805436" # DTS

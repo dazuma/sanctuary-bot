@@ -8,7 +8,11 @@ module SanctuaryBot
     end
 
     def bible_api_client
-      @bible_api_client ||= BibleApi::Client.new(api_key: config.bible_api_key)
+      @bible_api_client ||= BibleApi::Client.new
+    end
+
+    def discord_api_client
+      @discord_api_client ||= SanctuaryBot::DiscordApi::Client.new
     end
 
     def logger

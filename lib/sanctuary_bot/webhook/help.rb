@@ -39,13 +39,16 @@ module SanctuaryBot
          talking about. Here are some examples that I can respond to:
             `/word Matt 1:1`
             `/word Ps 23`
-            `/word Psalm 1:1-4`
-            `/word psa 1:4-2:3`
+            `/word psalm 1:1-4`
+            `/word 1 Jn 1:5-2:6`
 
-        A few caveats, though. First, Discord doesn't let me display a really long passage. The limit is about 2000\
-         characters. So if the passage is too long, I'll ask you to trim it down. Also, for now I'm limited to the\
-         World English Bible, which is in the public domain. (I'm just a bot, not a copyright lawyer.) I may get\
-         additional translations later, if Daniel can figure out how. Although he's not copyright lawyer either.
+        A few caveats, though. If you ask me for a long-ish passage, I might break it up into sections, because\
+         Discord doesn't let me display more than 2000 characters at a time. And please don't be mean and ask me for\
+         a _really_ long passage. Any more than a few hundred verses, and I might just give up halfway through.
+
+        Finally, for now I'm limited to the _World English Bible_, which is in the public domain. I'm just a bot, not\
+         a copyright lawyer. I may get additional translations later, if Daniel can figure out how. Although he's not\
+         a copyright lawyer either, the last time I checked.
       TEXT
 
       TOPIC_HELP_TEXT = <<~TEXT
