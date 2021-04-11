@@ -43,8 +43,14 @@ module SanctuaryBot
       end
 
       def data_for_passage(passage, reference, index, size)
+        content =
+          if size == 1
+            "_#{reference}…_\n#{passage.content}"
+          else
+            "_#{reference} (part #{index} of #{size})…_\n#{passage.content}"
+          end
         {
-          content: "_#{reference} (part #{index} of #{size})…_\n#{passage.content}",
+          content: content,
           allowed_mentions: {
             parse: [], roles: [], users: [], replied_user: false
           }

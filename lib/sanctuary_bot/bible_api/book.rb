@@ -1,15 +1,17 @@
 module SanctuaryBot
   module BibleApi
     class Book
-      def initialize(id:, name:)
+      def initialize(id:, name:, specials: nil)
         @id = id
         @name = name
         @match_name = name.downcase.tr(" ", "")
+        @specials = Array(specials)
       end
 
       attr_reader :id
       attr_reader :name
       attr_reader :match_name
+      attr_reader :specials
 
       class << self
         def find(name)
@@ -18,6 +20,11 @@ module SanctuaryBot
           best = nil
           best_score = 100.0
           @all.each do |book|
+            if book.specials.include?(name)
+              best = book
+              best_score = 1
+              next
+            end
             m = regexp.match(book.match_name)
             next unless m
             score = m[0].length.to_f * (1.0 - 1.0 / book.match_name.length)
@@ -73,7 +80,7 @@ module SanctuaryBot
         new(id: "MAT", name: "Matthew"),
         new(id: "MRK", name: "Mark"),
         new(id: "LUK", name: "Luke"),
-        new(id: "JHN", name: "John"),
+        new(id: "JHN", name: "John", specials: "jn"),
         new(id: "ACT", name: "Acts"),
         new(id: "ROM", name: "Romans"),
         new(id: "1CO", name: "1 Corinthians"),
@@ -96,7 +103,7 @@ module SanctuaryBot
         new(id: "2JN", name: "2 John"),
         new(id: "3JN", name: "3 John"),
         new(id: "JUD", name: "Jude"),
-        new(id: "REV", name: "Revelation")
+        new(id: "REV", name: "Revelation", specials: "revelations")
       ]
     end
   end
